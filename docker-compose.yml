@@ -1,0 +1,9 @@
+services:
+  dev:
+    restart: always
+    build:
+      context: ./docker
+      dockerfile: dockerfile
+    volumes:
+      - ${HOME}/.zsh_history:/root/.zsh_history
+      - ./:/usr/src
