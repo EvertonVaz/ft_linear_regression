@@ -6,13 +6,15 @@
 #    By: egeraldo <egeraldo@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/14 21:27:00 by egeraldo          #+#    #+#              #
-#    Updated: 2025/06/03 22:02:11 by egeraldo         ###   ########.fr        #
+#    Updated: 2025/06/06 22:50:42 by egeraldo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
+
+from src.model import Model
 
 
 class FtLinearRegression:
@@ -22,35 +24,25 @@ class FtLinearRegression:
     gradient descent. It supports reading data from a CSV file, normalizing the
     data, fitting the model to the data, making predictions, and evaluating the
     model using metrics like Mean Squared Error (MSE) and R-squared score.
-    Attributes:
-        learning_rate (float): The step size for gradient descent.
-        n_iterations (int): The number of iterations for gradient descent.
-        theta0 (float): The intercept term of the linear regression model.
-        theta1 (float): The slope term of the linear regression model.
-        data (list): The dataset read from the CSV file.
     """
 
-    X: np.ndarray = np.array([0])
-    X_mean: float = 0.0
-    X_std: float = 0.0
-
-    y: np.ndarray = np.array([0])
-    y_mean: float = 0.0
-    y_std: float = 0.0
-
-    theta0 = 0
-    theta1 = 0
     data = []
+    model: Model
 
-    def __init__(self, learning_rate: float = 0.01, n_iterations: int = 1000):
+    def __init__(
+        self,
+        learning_rate: float = 0.01,
+        n_iterations: int = 1000,
+        model_path: str = "./model.json",
+    ):
         """
         Initializes the linear regression model with a learning rate and number of iterations.
         :param learning_rate: The step size for gradient descent.
         :param n_iterations: The number of iterations for gradient descent.
         """
 
-        self.learning_rate = learning_rate
-        self.n_iterations = n_iterations
+        self.model = Model(learning_rate, n_iterations, model_path)
+        self.model_path = model_path
 
     def read_csv(self, file_path: str) -> list[list[float]]:
         """
@@ -81,28 +73,30 @@ class FtLinearRegression:
                 raise ValueError("Data must not be empty.")
             for i, row in enumerate(self.data):
                 if len(row) != 2:
-                    raise ValueError(f"Row {i} has {len(row)} columns, but exactly 2 columns are required for X and y.")
+                    raise ValueError(
+                        f"Row {i} has {len(row)} columns, but exactly 2 columns are required for X and y."
+                    )
         if X is not None and y is not None:
             if len(X) != len(y):
                 raise ValueError("X and y must have the same length.")
             self.data = list(zip(X, y))
 
-        self.X = np.array([row[0] for row in self.data])
-        self.y = np.array([row[1] for row in self.data])
-        self.X_mean = self.X.mean()
-        self.X_std = self.X.std()
-        self.y_mean = self.y.mean()
-        self.y_std = self.y.std()
+        self.model.X = np.array([row[0] for row in self.data])
+        self.model.y = np.array([row[1] for row in self.data])
+        self.model.X_mean = self.model.X.mean()
+        self.model.X_std = self.model.X.std()
+        self.model.y_mean = self.model.y.mean()
+        self.model.y_std = self.model.y.std()
         return (
-            (self.X - self.X_mean) / self.X_std,
-            (self.y - self.y_mean) / self.y_std,
+            (self.model.X - self.model.X_mean) / self.model.X_std,
+            (self.model.y - self.model.y_mean) / self.model.y_std,
         )
 
     def __denormalize(self, y_normalized: np.ndarray) -> np.ndarray:
         """
         Converts normalized predictions back to original scale.
         """
-        return y_normalized * self.y_std + self.y_mean
+        return y_normalized * self.model.y_std + self.model.y_mean
 
     def fit(self, X: list[float], y: list[float]) -> None:
         """
@@ -118,27 +112,28 @@ class FtLinearRegression:
         X_normalized, y_normalized = self.__normalize_data(X, y)
         m = len(X_normalized)
 
-        for i in range(self.n_iterations):
-            predictions = self.theta0 + self.theta1 * X_normalized
+        for i in range(self.model.n_iterations):
+            predictions = self.model.theta0 + self.model.theta1 * X_normalized
             error = predictions - y_normalized
+            if i == 0:
+                self.mse(y_normalized, predictions, "Initial")
 
-            tmp_theta0 = self.learning_rate * (error.sum() / m)
-            tmp_theta1 = self.learning_rate * (
+            tmp_theta0 = self.model.learning_rate * (error.sum() / m)
+            tmp_theta1 = self.model.learning_rate * (
                 (error * X_normalized).sum() / m
             )
 
-            self.theta0 -= tmp_theta0
-            self.theta1 -= tmp_theta1
+            self.model.theta0 -= tmp_theta0
+            self.model.theta1 -= tmp_theta1
 
-            if i % 100 == 0 or i == self.n_iterations - 1:
-                mse_value = self.mse(y_normalized, predictions)
-                print(f"Iteration {i+1}: MSE = {mse_value:.6f}")
+        self.mse(y_normalized, predictions, "Final")
+        self.model.save_model()
 
     def fit_intern_data(self) -> None:
         """
         Fits the model to the data using gradient descent.
         """
-        X, y = self.__normalize_data()
+        X, y = zip(*self.data) if self.data else ([], [])
         self.fit(X, y)
 
     def predict(self, X) -> np.ndarray:
@@ -148,18 +143,26 @@ class FtLinearRegression:
         :return: Predicted values.
         :raises ValueError: If the model has not been fitted yet.
         """
-        self.X = np.array(X)
-        X_normalized = (X - self.X_mean) / self.X_std
-        y_pred_normalized = self.theta0 + self.theta1 * X_normalized
+        try:
+            self.model.load_model()
+        except Exception as e:
+            print(f"Error loading model: {e}")
+        X = np.array(X)
+        X_normalized = (X - self.model.X_mean) / self.model.X_std
+        y_pred_normalized = (
+            self.model.theta0 + self.model.theta1 * X_normalized
+        )
         return self.__denormalize(y_pred_normalized)
 
-    def mse(self, y_true, y_pred) -> float:
+    def mse(self, y_true, y_pred, phase) -> float:
         """
         Calculates the Mean Squared Error (MSE) between true and predicted values.
         """
         y_true = np.array(y_true)
         y_pred = np.array(y_pred)
-        return np.mean((y_true - y_pred) ** 2)
+        mse = np.mean((y_true - y_pred) ** 2)
+        print(f"{phase} Mean Squared Error: {mse:.6f}")
+        return mse
 
     def r2_score(self, y_true, y_pred) -> float:
         """
@@ -175,27 +178,20 @@ class FtLinearRegression:
 
     def plot(self, X=None, y=None) -> None:
         """
-        Plots the data points and the fitted line.
+        Plots the predicted values against the actual data and saves the plot as 'plot.png'.
         :param X: Input features.
         :param y: Target variable.
         """
-        if X is None or y is None:
-            X = self.X
-            y = self.y
+        if X is not None and y is not None:
+            self.data = list(zip(X, y))
+        x_data = [row[0] for row in self.data]
+        y_data = [row[1] for row in self.data]
+        predictions = self.predict(x_data)
+        r2 = self.r2_score(y_data, predictions)
 
-        plt.scatter(X, y, color="blue", label="Data Points")
-        plt.plot(
-            X,
-            self.theta0 + self.theta1 * ((X - self.X_mean) / self.X_std),
-            color="red",
-            label="Fitted Line",
-        )
-        plt.xlabel("X")
-        plt.ylabel("y")
-        plt.title("Linear Regression Fit")
+        plt.scatter(x_data, y_data, color="blue", label="Dados reais")
+        plt.title(f"Previsão vs Dados reais (R² = {r2:.2f})")
+        plt.plot(x_data, predictions, color="red", label="Previsão")
         plt.legend()
-        plt.show()
-
-
-if __name__ == "__main__":
-    pass
+        plt.savefig("plot.png")
+        print("Gráfico salvo como 'plot.png'")

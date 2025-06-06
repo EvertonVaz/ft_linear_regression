@@ -27,4 +27,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.taskipy.tasks]
 test = "pytest -s -x --cov=src"
-
+estimate = "python estimatePrice.py"
+train = "python training.py"
+bonus = "python bonus.py"

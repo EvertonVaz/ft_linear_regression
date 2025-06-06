@@ -177,3 +177,5 @@ cython_debug/
 evals/
 **no_perm
 **log.txt
+**subject**
+model.json
