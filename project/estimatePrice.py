@@ -6,7 +6,7 @@
 #    By: egeraldo <egeraldo@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/05 20:45:08 by egeraldo          #+#    #+#              #
-#    Updated: 2025/06/06 22:35:25 by egeraldo         ###   ########.fr        #
+#    Updated: 2025/06/06 23:32:06 by egeraldo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,5 +33,8 @@ def estimatePrice() -> list[float]:
 
 
 if __name__ == "__main__":
-    pred = estimatePrice()[0]
-    print(f"Price estimate: {pred}")
+    try:
+        pred = estimatePrice()[0]
+        print(f"Price estimate: {pred}")
+    except Exception as e:
+        print(f"An error occurred: {e}")

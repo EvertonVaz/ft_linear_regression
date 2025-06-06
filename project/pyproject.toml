@@ -1,6 +1,6 @@
 [project]
 name = "project"
-version = "0.0.1"
+version = "1.0.0"
 description = "Realização do projeto ft_linear_regression da especialização em Machine Learning da 42"
 authors = [
     {name = "Everton Vaz",email = "egeraldo@student.42sp.org.br"}

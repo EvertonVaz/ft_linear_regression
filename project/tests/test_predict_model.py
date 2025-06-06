@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    test_predict_model.py                              :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: egeraldo <egeraldo@student.42sp.org.br>    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/06/06 23:07:39 by egeraldo          #+#    #+#              #
+#    Updated: 2025/06/06 23:07:40 by egeraldo         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 import pytest
 from src.ft_linear_regression import FtLinearRegression as lr
 

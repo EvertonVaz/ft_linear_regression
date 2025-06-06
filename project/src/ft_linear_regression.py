@@ -6,7 +6,7 @@
 #    By: egeraldo <egeraldo@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/14 21:27:00 by egeraldo          #+#    #+#              #
-#    Updated: 2025/06/06 22:50:42 by egeraldo         ###   ########.fr        #
+#    Updated: 2025/06/06 23:31:15 by egeraldo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -183,6 +183,8 @@ class FtLinearRegression:
         :param y: Target variable.
         """
         if X is not None and y is not None:
+            if len(X) != len(y):
+                raise ValueError("X and y must have the same length.")
             self.data = list(zip(X, y))
         x_data = [row[0] for row in self.data]
         y_data = [row[1] for row in self.data]

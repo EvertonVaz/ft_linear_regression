@@ -6,7 +6,7 @@
 #    By: egeraldo <egeraldo@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/05 21:05:02 by egeraldo          #+#    #+#              #
-#    Updated: 2025/06/06 22:30:19 by egeraldo         ###   ########.fr        #
+#    Updated: 2025/06/06 23:32:30 by egeraldo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,4 +37,7 @@ def training() -> None:
 
 
 if __name__ == "__main__":
-    training()
+    try:
+        training()
+    except Exception as e:
+        print(f"An error occurred during training: {e}")

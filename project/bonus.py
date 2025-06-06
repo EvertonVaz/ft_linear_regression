@@ -6,7 +6,7 @@
 #    By: egeraldo <egeraldo@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/06 22:43:37 by egeraldo          #+#    #+#              #
-#    Updated: 2025/06/06 22:48:23 by egeraldo         ###   ########.fr        #
+#    Updated: 2025/06/06 23:31:45 by egeraldo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,5 +22,8 @@ def bonus() -> None:
 
 
 if __name__ == "__main__":
-    bonus()
-    print("Bonus task completed successfully.")
+    try:
+        bonus()
+        print("Bonus task completed successfully.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
