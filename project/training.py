@@ -6,7 +6,7 @@
 #    By: egeraldo <egeraldo@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/05 21:05:02 by egeraldo          #+#    #+#              #
-#    Updated: 2025/06/06 23:32:30 by egeraldo         ###   ########.fr        #
+#    Updated: 2025/06/09 21:18:12 by egeraldo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,13 +24,14 @@ def training() -> None:
     )
     if not model_path:
         model_path = "./model.json"
-    model = lr(model_path=model_path)
 
     file_path = input(
         "Enter the path to the CSV file (default: src/data.csv): "
     )
     if not file_path:
         file_path = "src/data.csv"
+        
+    model = lr(model_path=model_path)
     model.read_csv(file_path)
     model.fit_intern_data()
     print("Model trained successfully.")
