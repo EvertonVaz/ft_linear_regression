@@ -6,7 +6,7 @@
 #    By: egeraldo <egeraldo@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/05 19:26:19 by egeraldo          #+#    #+#              #
-#    Updated: 2025/06/06 22:32:44 by egeraldo         ###   ########.fr        #
+#    Updated: 2025/08/09 12:44:36 by egeraldo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -88,6 +88,6 @@ class Model:
 if __name__ == "__main__":
     model = Model()
     print(model)
-    model.save_model("model.json")
-    model.load_model("model.json")
+    model.save_model()
+    model.load_model()
     print(model)

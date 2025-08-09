@@ -6,7 +6,7 @@
 #    By: egeraldo <egeraldo@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/14 21:27:00 by egeraldo          #+#    #+#              #
-#    Updated: 2025/06/06 23:31:15 by egeraldo         ###   ########.fr        #
+#    Updated: 2025/08/09 12:48:34 by egeraldo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -193,6 +193,8 @@ class FtLinearRegression:
 
         plt.scatter(x_data, y_data, color="blue", label="Dados reais")
         plt.title(f"Previsão vs Dados reais (R² = {r2:.2f})")
+        plt.xlabel("Km")
+        plt.ylabel("Valor $")
         plt.plot(x_data, predictions, color="red", label="Previsão")
         plt.legend()
         plt.savefig("plot.png")
